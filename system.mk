@@ -3,16 +3,19 @@ LOGO	= fstoneos
 VERSION	= 1.0
 SIGN	= $(LOGO)-$(VERSION)
 
+# dd, tool to write floppy
+WRITE	= dd bs=512 count=1 conv=notrunc 
+
 # FD, Floppy Disc
 FD	= $(SIGN).img
 FSIZE	= 1.44M
-MKFD	= bximage -q -mode=create -fd=$(FSIZE)
+MKFD	= bximage -mode=create -fd=$(FSIZE) -q
 
 # CD, Compact Disc
 CDROOT	= $(SIGN)
 CD	= $(CDROOT).iso 
-LOADADDR= 0x0000
-MKCD	= mkisofs
+LOADADDR= 0x7c00
+MKCD	= mkisofs -input-charset=utf-8 -q
 
 # HD, Hard Disk
 
