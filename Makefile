@@ -1,42 +1,31 @@
+# config file
+SYSCFG	= system.mk
+include $(SYSCFG)
+
+# Code & Build result
+MAIN	= boot.asm
+
+# Compile & Link
 ASM 	= nasm
 
-DEFINES	+= -D_DEBUG 
+all:$(BOOT)
+	
+BOOT_FROM_FD:$(EXE) $(FD)
+	dd if=$(EXE) of=$(FD) bs=512 count=1 conv=notrunc
+$(FD):
+	$(MKFD) $(FD)
 
-CFLAGS	+= -Wall -g -pthread
-
-LDFLAGS	+= 
-
-INCLUDES += -I$(DIR_DEVLIBS)/include
-
-vpath %.a $(DIR_DEVLIBS)/lib
-
-SRC	= 
-MAIN	= boot.asm
-OBJS	= $(MAIN:.cpp=.o) $(SRC:.cpp=.o)
-EXE	= $(MAIN:.asm=.bin)
-ISO	= fos.iso
-CDROOT	= cdroot
-LOADADDR= 0x1000
-
-all:$(EXE)
+BOOT_FROM_CD:$(EXE) 
 	mkdir -p $(CDROOT)
 	cp $(EXE) $(CDROOT)
-	mkisofs -input-charset=utf-8 -r -o $(ISO) $(CDROOT)
-	mkisofs -input-charset=utf-8 -R -b $(EXE) -no-emul-boot -boot-load-seg $(LOADADDR) -o $(ISO) $(CDROOT)
+	$(MKCD) -input-charset=utf-8 -r -o $(CD) $(CDROOT)
+	$(MKCD) -input-charset=utf-8 -R -b $(EXE) -no-emul-boot -boot-load-seg $(LOADADDR) -o $(CD) $(CDROOT)
 
-$(EXE):$(MAIN)
-	$(ASM) $< -o $@
-
-.c.o:
-	$(CC) -c $(DEFINES) $(INCLUDES) $(CFLAGS) $< -o $@
-
-.cpp.o:
-	$(CPP) -c $(DEFINES) $(INCLUDES) $(CFLAGS) $< -o $@
+$(EXE):$(MAIN) $(SYSCFG)
+	$(ASM) -D$(BOOT) $< -o $@
 
 clean:
-	rm -f $(EXE) $(ISO)
+	rm -f $(EXE) $(FD) $(CD) $(HD)
 	if [ -d $(CDROOT) ];then rm -r $(CDROOT);fi
-
 run:
-	bochs
-
+	$(RUN) $($(BOOT))

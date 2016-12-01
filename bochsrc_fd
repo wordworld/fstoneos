@@ -10,13 +10,11 @@ romimage: file=/usr/share/bochs/BIOS-bochs-latest
 vgaromimage: file=/usr/share/vgabios/vgabios.bin
 
 # what disk images will be used
-floppya: 1_44=a.img, status=inserted
-ata0-master:type=cdrom, path=fos.iso, status=inserted
+floppya: 1_44=fstoneos-1.0.img, status=inserted
 
 
 # choose the boot disk.
-# boot: floppy
-boot: cdrom
+boot: floppy
 
 # where do we send log messages?
 # log: bochsout.txt
