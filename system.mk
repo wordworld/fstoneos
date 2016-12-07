@@ -26,8 +26,8 @@ FILLCD	= mkisofs -R -q -input-charset=utf-8 -no-emul-boot -boot-load-seg $(LOADA
 BOOT_FROM_FD	= bochsrc_fd
 BOOT_FROM_CD	= bochsrc_cd
 BOOT_FROM_HD	= bochsrc_hd
-# BOOT		= BOOT_FROM_FD
-BOOT		= BOOT_FROM_CD
+BOOT		= BOOT_FROM_FD
+# BOOT		= BOOT_FROM_CD
 # BOOT		= BOOT_FROM_HD
 
 # debug & run

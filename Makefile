@@ -16,6 +16,7 @@ MAIN	= boot.asm
 
 # Compile & Link
 ASM 	= nasm
+AFLAGS	= -D$(BOOT) -Iinc/
 
 
 all:$(BOOT)
@@ -36,7 +37,7 @@ $(FD):
 
 
 $(EXE):$(MAIN) $(SYSCFG)
-	$(ASM) -D$(BOOT) $< -o $@
+	$(ASM) $(AFLAGS) $< -o $@
 
 
 clean:
