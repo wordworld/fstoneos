@@ -66,5 +66,5 @@ DispStr:
 
 BootMessage:		db	"Hello, I'm fstoneos-1.0!"
 strlen:			db	$-BootMessage
-times 	510-($-$$)	db	0	; 定义 [ 510-已使用内存字节数 ] 个字节0， 此后的内存地址为 511,512
+times 	510-($-$$)	db	0	; 以0填充 [ 510-已使用内存字节数 ] 个字节， 此后的内存地址为 511,512
 dw 	0xaa55				; magic number, 引导标志
