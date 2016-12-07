@@ -24,22 +24,15 @@ Clrscr:
 	int	10h
 	ret
 
-; 显示字符串(输出位置由 DH(行),DL(列) 提供)
+; 显示字符串
+;	输出位置由 DH(行),DL(列) 提供
+;	字符串首地址由 ES:BP 给出
+;	字符串长度由 CX 给出
 DispStr:
 	; ISR( int 10h ) AH = 13h : 显示字符串
 	; 	AL = 1 : BL表示属性
 	mov	ax, 1301h
-
 	;	BL = 6 (0110b) : 棕色. BH = 页号
 	mov	bx, 0006h
-
-	;	ES:BP = 串地址
-	mov	cx, BootMessage
-	mov	bp, cx
-
-	;	CX = 串长度
-	mov	cx, [strlen]
-
-
 	int	10h
 	ret

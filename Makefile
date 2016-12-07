@@ -16,7 +16,12 @@ MAIN	= boot.asm
 
 # Compile & Link
 ASM 	= nasm
-AFLAGS	= -D$(BOOT) -Iinc/
+ASFLAGS	= 
+INCLUDES= -Iinc/ -Idemo/
+
+# defines
+DEFINES	= -D$(BOOT)
+DEFINES += -D$(DEMO_001) 
 
 
 all:$(BOOT)
@@ -37,15 +42,18 @@ $(FD):
 
 
 $(EXE):$(MAIN) $(SYSCFG)
-	$(ASM) $(AFLAGS) $< -o $@
+	$(ASM) $(DEFINES) $(INCLUDES) $(ASFLAGS) $< -o $@
 
 
 clean:
-	rm -f $(EXE) $(FD) $(CD) $(HD)
+	rm -f $(EXE)
+
+cleanall:clean
+	rm -f $(FD) $(CD) $(HD)
 	if [ -d $(CDROOT) ];then rm -r $(CDROOT);fi
 
 run:
-	$(RUN) $($(BOOT))
+	$(BOCHS) -f $($(BOOT))
 
 burn:
 	sudo dd if=$(CD) of=/dev/sdb
