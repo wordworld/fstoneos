@@ -30,3 +30,7 @@
 
 # tmp file ignore
 *.swp
+*.tmp
+*.mac
+*.iso
+*.img

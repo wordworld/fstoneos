@@ -26,6 +26,7 @@
 	; 显示串后进入死循环
 	call	DispStr		; 显示字符串
 	jmp	$		; while( 1 );
+	;hlt
 
 ; 跳转到当前光标位置
 GotoCursor:
