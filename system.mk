@@ -23,8 +23,8 @@ MKCD	= mkisofs -input-charset=utf-8 -q
 BOOT_FROM_FD	= bochsrc_fd
 BOOT_FROM_CD	= bochsrc_cd
 BOOT_FROM_HD	= bochsrc_hd
-# BOOT		= BOOT_FROM_FD
-BOOT		= BOOT_FROM_CD
+BOOT		= BOOT_FROM_FD
+# BOOT		= BOOT_FROM_CD
 # BOOT		= BOOT_FROM_HD
 
 # debug & run
