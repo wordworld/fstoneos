@@ -11,8 +11,6 @@
 SYSCFG	= system.mk
 include $(SYSCFG)
 
-# Code & Build result
-MAIN	= boot.asm
 
 # Compile & Link
 ASM 	= nasm
@@ -20,9 +18,11 @@ ASFLAGS	=
 INCLUDES= -Iinc/ -Idemo/
 
 # defines
-DEFINES	= -D$(BOOT)
-DEFINES += -D$(DEMO_001) 
+DEFINES	= -D$(BOOT) -D$(DEMO)
 
+# Code & Build result
+MAIN	= boot.asm
+SRC	= demo/$(DEMO_LOWER).asm
 
 all:$(BOOT)
 
@@ -41,7 +41,7 @@ $(FD):
 	$(MKFD) $(FD)
 
 
-$(EXE):$(MAIN) $(SYSCFG)
+$(EXE):$(MAIN) $(SYSCFG) $(SRC)
 	$(ASM) $(DEFINES) $(INCLUDES) $(ASFLAGS) $< -o $@
 
 

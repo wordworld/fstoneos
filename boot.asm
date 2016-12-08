@@ -17,6 +17,11 @@
 ; demo_001 简单引导示例
 %ifdef D001_SIMPLE_BOOT
 	%include "d001_simple_boot.asm"
-%endif	; SIMPLE_BOOT_OO1
+%endif
+
+; demo_002 进入保护模式
+%ifdef D002_ENTER_PM
+	%include "d002_enter_pm.asm"
+%endif
 
 

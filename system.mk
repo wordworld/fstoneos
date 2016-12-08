@@ -34,10 +34,14 @@ BOCHS		= bochs -q -rc $(BOCHS_SCRIPT)
 BOOT_FROM_FD	= $(DBOCHSRC)/bochsrc_fd
 BOOT_FROM_CD	= $(DBOCHSRC)/bochsrc_cd
 BOOT_FROM_HD	= $(DBOCHSRC)/bochsrc_hd
-BOOT		= BOOT_FROM_FD
-# BOOT		= BOOT_FROM_CD
+# BOOT		= BOOT_FROM_FD
+BOOT		= BOOT_FROM_CD
 # BOOT		= BOOT_FROM_HD
 
 
 # module
 DEMO_001	= D001_SIMPLE_BOOT
+DEMO_002	= D002_ENTER_PM
+DEMO		= $(DEMO_002)
+DEMO_LOWER	= $(shell echo "$(DEMO)" | tr "[A-Z]" "[a-z]")
+
