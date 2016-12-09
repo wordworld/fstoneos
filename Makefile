@@ -18,11 +18,18 @@ ASFLAGS	=
 INCLUDES= -Iinc/ -Idemo/
 
 # defines
-DEFINES	= -D$(BOOT) -D$(DEMO)
+DEFINES	= -D$(BOOT) -D$(DEMO)=$(DEMO)
+
+# Pre include
+PINCS	= -Pprepro.s
 
 # Code & Build result
-MAIN	= boot.asm
-SRC	= demo/$(DEMO_LOWER).asm
+MAIN	= $(DEMO_LOWER).asm
+SRC	= 
+
+vpath	d%.asm	demo
+
+CMD_CLEAN_DIR := if [ -d $(CDROOT) ];then rm -r $(CDROOT);fi
 
 all:$(BOOT)
 
@@ -30,6 +37,7 @@ cd:BOOT_FROM_CD
 BOOT_FROM_CD:$(EXE) $(CD)
 	cp $(EXE) $(CDROOT)/$(DBOOT)
 	$(FILLCD) -b $(DBOOT)/$(EXE) -c $(DBOOT)/$(EXE:.mac=.catalog) -o $(CD) $(CDROOT)
+
 $(CD):
 	mkdir -p $(CDROOT)/$(DBOOT)
 	$(MKCD) -o $(CD) $(CDROOT)
@@ -42,15 +50,15 @@ $(FD):
 
 
 $(EXE):$(MAIN) $(SYSCFG) $(SRC)
-	$(ASM) $(DEFINES) $(INCLUDES) $(ASFLAGS) $< -o $@
+	$(ASM) $(DEFINES) $(INCLUDES) $(PINCS) $(ASFLAGS) $< -o $@
 
 
 clean:
 	rm -f $(EXE)
 
-cleanall:clean
+clear:clean
 	rm -f $(FD) $(CD) $(HD)
-	if [ -d $(CDROOT) ];then rm -r $(CDROOT);fi
+	$(CMD_CLEAN_DIR)
 
 run:
 	$(BOCHS) -f $($(BOOT))

@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; @brief	描述符相关结构
+;; 
+;; 
+;; @file	descriptor.s
+;; @author	fstone.zh@foxmail.com
+;; @date	2016-12-09
+;; @version	0.1.0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+%ifndef __DESCRIPTOR_S__
+%define __DESCRIPTOR_S__
 
 
 ; 表1. 描述符结构 ( 8 字节 )
@@ -63,4 +74,6 @@ DA_32		EQU	4000h	; 32 位段
 DA_DRW		EQU	92h	; 存在的可读写数据段属性值
 DA_C		EQU	98h	; 存在的只执行代码段属性值
 
+
+%endif ;  __DESCRIPTOR_S__
 
