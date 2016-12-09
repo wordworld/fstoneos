@@ -34,8 +34,8 @@ BOCHS		= bochs -q -rc $(BOCHS_SCRIPT)
 BOOT_FROM_FD	= $(DBOCHSRC)/bochsrc_fd
 BOOT_FROM_CD	= $(DBOCHSRC)/bochsrc_cd
 BOOT_FROM_HD	= $(DBOCHSRC)/bochsrc_hd
-# BOOT		= BOOT_FROM_FD
-BOOT		= BOOT_FROM_CD
+BOOT		= BOOT_FROM_FD
+# BOOT		= BOOT_FROM_CD
 # BOOT		= BOOT_FROM_HD
 
 

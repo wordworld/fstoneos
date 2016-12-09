@@ -9,32 +9,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	; 使 ds es 都指向代码段 (即cs的值)
-	mov	ax, cs
-	mov	ds, ax
-	mov	es, ax
+	mov	ax, cs	; 获取  代码段 基址
+	mov	ds, ax	; 代码段 用作 数据段
+	mov	es, ax	; 代码段 用作 扩展段 
 
-	; 设置输出位置
-	call	GotoCursor	; 跳到光标位置
-
-	; 显示字符串后进入死循环
+	; 跳到光标当前位置
+	call	GotoCursor
+	; 显示启动信息字符串
 	;	ES:BP = 串地址
-	mov	cx, BootMessage
+	mov	cx, bootmsg
 	mov	bp, cx
-	;	CX = 串长度
+	; 	CX = 串长度
 	mov	cx, [msglen]
-	call	DispStr		; 显示字符串
-	jmp	$		; while( 1 );
+	;	调用显示过程
+	call	DispStr	
 
-	; 包含显示相关函数定义
+	; 进入死循环
+	jmp	$
+
+	; 包含显示相关过程定义
 	%include	"io.asm"
 
-; 数据
-BootMessage:
-	db	"Hello, I'm fstoneos-1.0!"
-msglen:
-	db	$-BootMessage
+; 启动信息
+bootmsg:db	"Hello, I'm an os booting program!"
+msglen:	db	$ - bootmsg
 
 	; 以0填充 [ 510-已使用内存字节数 ] 个字节， 此后的内存地址为 511,512
-	times 	510-($-$$)	db	0
+	times	510 - ($-$$)	db	0
 	; magic number, 引导标志
 	dw 	0xaa55
