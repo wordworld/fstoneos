@@ -10,6 +10,7 @@
 %ifndef __DESCRIPTOR_S__
 %define __DESCRIPTOR_S__
 
+; 位运算优先级(降序) [<<][>>] [&] [^] [|]
 
 ; 描述符结构 ( 8 字节 )
 ; ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐
@@ -41,17 +42,16 @@
 ; └─────────┴─────────┴─────────┴─────────┘    └──────────────────────────────────┘
 
 ; 描述符
-; usage: Descriptor Base, Limit, Attr
 ; @param 1	段基址(segment base address)	4B	xxxx xxxx
 ; @param 2	段界限(segment limit)		2.5B	  xx xxxx
 ; @param 3	段属性(segment attribute)	2B	     x0xx
-%macro Descriptor 3
+%macro STRUCT_DESCRIPTOR 3
 	dw   0FFFFh & (%2)			; lmt1 ( 0-15,2B)
-	dd 0FFFFFFh & (%1)     | (%3)<<24	; base1(16-39,3B) | attr1(40-47,1B)
-	db      0Fh & (%2)>>16 | (%3)>>8 & 0F0h	; lmt2 (48-51,4b) | attr2(52-55,4b)
+	dw   0FFFFh & (%1)			; base1-low16(16-31,2B)
+	db     0FFh & (%1)>>16			; base1-high8(32-39,1B)
+	dw   0F0FFh & (%3) | 0F00h & (%2)>>8	; attr1(40-47,1B) | lmt2 (48-51,4b) | attr2(52-55,4b)
 	db     0FFh & (%1)>>24			; base2(56-63,1B)
 %endmacro 
-; 位运算优先级(降序) [<<][>>] [&] [^] [|]
 
 ; 属性attr2 (高4位)
 DESC_G		EQU	8000H	; 粒度
@@ -60,19 +60,38 @@ DESC_DB		EQU	4000H	; D/B
 DESC_AVL	EQU	1000H	; AVL
 
 ; 属性attr1 (低8位)
-DESC_P		EQU	0080H	; P位(Present): 1,段在内存; 0,段不在内存
-DESC_DPL_3	EQU	0060H	; 描述符特权级 Descriptor Privilege Level,DPL-3
-DESC_DPL_2	EQU	0040H	; DPL-2
-DESC_DPL_1	EQU	0020H	; DPL-1
-DESC_DPL_0	EQU	0000H	; DPL-0
-DESC_S		EQU	0010H	; S位: 1,代码-数据段; 0,系统段-门
+DESC_P		EQU	  80H	; P位(Present): 1,段在内存; 0,段不在内存
+DESC_DPL_3	EQU	  60H	; 描述符特权级 Descriptor Privilege Level,DPL-3
+DESC_DPL_2	EQU	  40H	; DPL-2
+DESC_DPL_1	EQU	  20H	; DPL-1
+DESC_DPL_0	EQU	  00H	; DPL-0
+DESC_S		EQU	  10H	; S位: 1,代码-数据段; 0,系统段-门
 ; type
-DESC_EXECUTABLE	EQU	0008H	; 1000b 可执行
-DESC_EXPAND_DOWN EQU	0004H	; 0100b 向下扩充
-DESC_WRITE	EQU	0002H	; 0010b 写
-DESC_ACCESSED	EQU	0001H	; 0001b 已访问
-;DESC_READ	EQU	0000H	; 0000b 读
-DESC_CONFORMING	EQU	000CH	; 1100b 一致代码段
+DESC_EXECUTABLE	EQU	   8H	; 1000b 可执行
+DESC_EXPAND_DOWN EQU	   4H	; 0100b 向下扩充
+DESC_WRITE	EQU	   2H	; 0010b 写
+DESC_ACCESSED	EQU	   1H	; 0001b 已访问
+;DESC_READ	EQU	   0H	; 0000b 读
+DESC_CONFORMING	EQU	  0cH	; 1100b 一致代码段
+
+; 选择子
+; ┌────┬────┬────┬────────────────────────────────────────────────────────────────┐
+; │0   │1   │2   │3                                                             15│ 
+; ├────┴────┼────┼────────────────────────────────────────────────────────────────┤
+; │   RPL   │ TI │                         Index                                  │
+; └─────────┴────┴────────────────────────────────────────────────────────────────┘
+
+; 声明选择子常量
+%define	SELECTOR(name, index, rpl_ti) name EQU 0fff8h & (index)<<3 | (rpl_ti)
+
+; TI
+SELECTOR_GDT	EQU	00H
+SELECTOR_LDT	EQU	04H
+; RPL
+SELECTOR_RPL_3	EQU	03H
+SELECTOR_RPL_2	EQU	02H
+SELECTOR_RPL_1	EQU	01H
+SELECTOR_RPL_0	EQU	00H
 
 
 

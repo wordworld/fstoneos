@@ -13,20 +13,22 @@
 [SECTION .gdt]
 ; 全局描述符表 (Global Descriptor Table,GDT) 段基址, 段界限, 属性
 LABEL_GDT: 		; [0] 空描述符
-	Descriptor 0,	0,		0
+	STRUCT_DESCRIPTOR 0,	0,		0
 LABEL_DESC_CODE32:	; [1] 非一致代码段
-	Descriptor 0,	SegCode32Len-1,	DESC_P|DESC_S|DESC_EXECUTABLE | DESC_DB
+	STRUCT_DESCRIPTOR 0,	SegCode32Len-1,	DESC_P|DESC_S|DESC_EXECUTABLE | DESC_DB
 LABEL_DESC_VIDEO:	; [2] 显存
-	Descriptor 0B8000h, 0ffffh,	DESC_P|DESC_S|DESC_WRITE
+	STRUCT_DESCRIPTOR 0B8000h, 0ffffh,	DESC_P|DESC_S|DESC_WRITE
 
 	GdtLen	equ	$ - LABEL_GDT	; GDT长度
-	GdtPtr	dw	GdtLen - 1	; GDT界限
+GdtLoader:
+		dw	GdtLen - 1	; GDT界限
 		dd	0		; GDT基地址
-; GDT 选择子
-SelectorCode32		equ	LABEL_DESC_CODE32	- LABEL_GDT
-SelectorVideo		equ	LABEL_DESC_VIDEO	- LABEL_GDT
-; END of [SECTION .gdt]
 
+; GDT 选择子
+SELECTOR( SelectorCode32,1, SELECTOR_GDT | SELECTOR_RPL_0 )
+SELECTOR( SelectorVideo, 2, SELECTOR_GDT | SELECTOR_RPL_0 )
+
+; END of [SECTION .gdt]
 [SECTION .s16]
 [BITS	16]
 LABEL_BEGIN:
@@ -37,24 +39,31 @@ LABEL_BEGIN:
 	mov	sp, 0100h
 
 	; 初始化 32 位代码段描述符
+	; eax = cs(28b) : offset (4b)
 	xor	eax, eax
 	mov	ax, cs
 	shl	eax, 4
 	add	eax, LABEL_SEG_CODE32
+	; base1-low16 = cs-low12 : offset(4)
 	mov	word [LABEL_DESC_CODE32 + 2], ax
 	shr	eax, 16
+	; base1-hig8 = cs-13,20
 	mov	byte [LABEL_DESC_CODE32 + 4], al
+	; base2 = cs-21,28
 	mov	byte [LABEL_DESC_CODE32 + 7], ah
 
 	; 为加载 GDTR 作准备
+	; eax = ds(28b) : GTD offset(4b)
 	xor	eax, eax
 	mov	ax, ds
 	shl	eax, 4
 	add	eax, LABEL_GDT		; eax <- gdt 基地址
-	mov	dword [GdtPtr + 2], eax	; [GdtPtr + 2] <- gdt 基地址
+	; 保存 ds:offset 形式的 GDT 基地址
+	mov	dword [GdtLoader+2], eax; [GdtLoader + 2] <- gdt 基地址
 
 	; 加载 GDTR
-	lgdt	[GdtPtr]
+	; TODO
+	lgdt	[GdtLoader]
 
 	; 关中断
 	cli
