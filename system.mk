@@ -42,5 +42,6 @@ BOOT		= BOOT_FROM_CD
 # module
 DEMO_LOWER	= $(shell echo "$(DEMO)" | tr "[A-Z]" "[a-z]")
 # DEMO		= D001_SIMPLE_BOOT
-DEMO		= D002_ENTER_PM
+# DEMO		= D002_ENTER_PM
+DEMO		= D003_PM2RM
 
