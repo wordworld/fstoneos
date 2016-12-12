@@ -4,7 +4,7 @@
 ;; 
 ;; @file	io.asm
 ;; @author	fstone.zh@foxmail.com
-;; @date	2016-12-07
+;; @date	2016-12-12
 ;; @version	0.1.0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -31,6 +31,8 @@ Clrscr:
 DispStr:
 	; ISR( int 10h ) AH = 13h : 显示字符串
 	; 	AL = 1 : BL表示属性
+	;	参考	INT 10H ( https://en.wikipedia.org/wiki/INT_10H )
+	;		和 BIOS 颜色属性 ( https://en.wikipedia.org/wiki/BIOS_color_attributes )
 	mov	ax, 1301h
 	;	BL = 6 (0110b) : 棕色. BH = 页号
 	mov	bx, 0006h
