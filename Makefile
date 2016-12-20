@@ -4,7 +4,7 @@
 ##! 
 ##! @file	Makefile
 ##! @author	fstone.zh@foxmail.com
-##! @date	2016-12-07
+##! @date	2016-12-16
 ##! @version	0.1.0
 ############################################################
 # config file
@@ -57,7 +57,7 @@ clean:
 	rm -f $(EXE)
 
 clear:clean
-	rm -f $(FD) $(CD) $(HD)
+	rm -f $(EXE) $(FD) $(CD) $(HD) *.mac *.bin *.exe
 	$(CMD_CLEAN_DIR)
 
 run:
