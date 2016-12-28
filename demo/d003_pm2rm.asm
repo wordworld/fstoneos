@@ -4,7 +4,7 @@
 ;; 
 ;; @file	d003_pm2rm.asm
 ;; @author	fstone.zh@foxmail.com
-;; @date	2016-12-22
+;; @date	2016-12-28
 ;; @version	0.1.0
 ;;************************************************************
 %include "descriptor.s"
@@ -15,20 +15,51 @@
 [SECTION .gdt]
 
 ; 全局描述符表 GDT,GlobalDescriptorTable 段基址, 段界限,	段属性
-; 	0 空描述符
-LABEL_GDT:		STRUCT_DESCRIPTOR 0,	0,		0
-; 	1 非一致32位代码段
-LABEL_DESC_CODE32:	STRUCT_DESCRIPTOR 0,	SegCode32Len-1,	DESC_P|DESC_S|DESC_EXECUTABLE|DESC_DB
-; 	2 显存数据段
-LABEL_DESC_VIDEO:	STRUCT_DESCRIPTOR 0B8000h, 0ffffh,	DESC_P|DESC_S|DESC_WRITE
+LABEL_GDT:		STRUCT_DESCRIPTOR 0,	0,		0						;0空描述符
+LABEL_DESC_CODE32:	STRUCT_DESCRIPTOR 0,	SegCode32Len-1,	DESC_P|DESC_S|DESC_EXECUTABLE|DESC_DB		; 非一致32位代码段
+LABEL_DESC_CODE16:	STRUCT_DESCRIPTOR 0,	0ffffh,		DESC_P|DESC_S|DESC_EXECUTABLE			; 非一致16位代码段
+LABEL_DESC_DATA:	STRUCT_DESCRIPTOR 0,	DataLen-1,	DESC_P|DESC_S|DESC_WRITE			; 数据段
+LABEL_DESC_STACK:	STRUCT_DESCRIPTOR 0,	TopOfStack,	DESC_P|DESC_S|DESC_WRITE|DESC_ACCESSED|DESC_DB	; 32位全局堆栈段
+LABEL_DESC_TEST:	STRUCT_DESCRIPTOR 0500000h, 0ffffh,	DESC_P|DESC_S|DESC_WRITE			; 测试数据段
+LABEL_DESC_VIDEO:	STRUCT_DESCRIPTOR 0B8000h, 0ffffh,	DESC_P|DESC_S|DESC_WRITE			; 显存数据段
 
 	GdtLen	equ	$ - LABEL_GDT	; GDT 长度
 gdtr_data:	dw	GdtLen - 1	; GDT 界限
 		dd	0		; GDT 基址
 
 ; GDT 选择子
-SELECTOR( SelectorCode32,	1, SELECTOR_GDT | SELECTOR_RPL_0 )	; 32位代码段
-SELECTOR( SelectorVideo,	2, SELECTOR_GDT | SELECTOR_RPL_0 )	; 显存数据段
+;		name		index	TI		RPL
+SELECTOR( SelectorNormal,	0,	SELECTOR_GDT | SELECTOR_RPL_0 )	; 空描述符
+SELECTOR( SelectorCode32,	1,	SELECTOR_GDT | SELECTOR_RPL_0 )	; 32位代码段
+SELECTOR( SelectorCode16,	2,	SELECTOR_GDT | SELECTOR_RPL_0 ) ; 16位代码段
+SELECTOR( SelectorData,		3,	SELECTOR_GDT | SELECTOR_RPL_0 ) ; 数据段
+SELECTOR( SelectorStack,	4,	SELECTOR_GDT | SELECTOR_RPL_0 ) ; 32位全局堆栈段
+SELECTOR( SelectorTest,		5,	SELECTOR_GDT | SELECTOR_RPL_0 ) ; 测试数据段
+SELECTOR( SelectorVideo,	6,	SELECTOR_GDT | SELECTOR_RPL_0 )	; 显存数据段
+
+;************************************************************
+; 32位数据段
+[SECTION .data1]
+ALIGN 32
+[BITS 32]
+
+LABEL_DATA:
+	SPValueInRealMode	dw	0
+	PMMessage:		db	"In Protect Mode now. ^-^", 0	; 在保护模式中显示
+	OffsetPMMessage		equ	PMMessage - $$
+	StrTest:		db	"ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0
+	OffsetStrTest		equ	StrTest - $$
+	DataLen			equ	$ - LABEL_DATA
+
+;************************************************************
+; 32位全局堆栈段
+[SECTION .gs]
+ALIGN 32
+[BITS 32]
+
+LABEL_STACK:
+	times 512 db 0
+TopOfStack	equ	$ - LABEL_STACK - 1
 
 ;************************************************************
 ; 16 位代码段 (CPU工作于实模式)
