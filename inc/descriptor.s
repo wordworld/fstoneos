@@ -4,7 +4,7 @@
 ;; 
 ;; @file	descriptor.s
 ;; @author	fstone.zh@foxmail.com
-;; @date	2016-12-12
+;; @date	2016-12-28
 ;; @version	0.1.0
 ;;************************************************************
 %ifndef __DESCRIPTOR_S__
@@ -104,15 +104,9 @@ SELECTOR_RPL_0	EQU	00H
 %macro Gate 4
 	dw	(%2) & 0FFFFh				; 偏移1
 	dw	(%1)					; 选择子
-	dw	(%3) & 1Fh) | (((%4) << 8) & 0FF00h	; 属性
-	dw	((%2) >> 16) & 0FFFFh			; 偏移2
+	dw	(%3) & 1Fh | (%4) << 8 & 0FF00h		; 属性
+	dw	(%2) >> 16 & 0FFFFh			; 偏移2
 %endmacro ; 共 8 字节
-
-; 描述符类型
-;DA_32		EQU	DESC_DB	; 32 位段
-; 存储段描述符类型
-;DA_DRW		EQU	DESC_P|DESC_S|DESC_WRITE 	; 92h 存在的可读写数据段属性值
-;DA_C		EQU	DESC_P|DESC_S|DESC_EXECUTABLE	; 98h 存在的只执行代码段属性值
 
 
 %endif ;  __DESCRIPTOR_S__
