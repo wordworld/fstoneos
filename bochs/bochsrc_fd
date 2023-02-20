@@ -6,11 +6,11 @@
 megs: 32
 
 # filename of ROM images
-romimage: file=/usr/share/bochs/BIOS-bochs-latest
-vgaromimage: file=/usr/share/vgabios/vgabios.bin
+romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
+# vgaromimage: file=/usr/local/share/vgabios/vgabios.bin
 
 # what disk images will be used
-floppya: 1_44=fstoneos-1.0.img, status=inserted
+floppya: image="fstoneos-1.0.img", status=inserted
 
 
 # choose the boot disk.
@@ -24,4 +24,4 @@ mouse: enabled=0
 
 # enable key mapping, using US layout as default.
 # keyboard_mapping: enabled=1, map=/usr/share/bochs/keymaps/x11-pc-us.map
-keyboard: keymap=/usr/share/bochs/keymaps/x11-pc-us.map
+keyboard: keymap=/usr/local/share/bochs/keymaps/x11-pc-us.map

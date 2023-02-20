@@ -4,7 +4,7 @@ VERSION	= 1.0
 SIGN	= $(LOGO)-$(VERSION)
 
 # executable file extension
-EXE		= $(subst .asm,.mac,$(filter %.asm,$(MAIN)))$(subst .c,.bin,$(filter %.c,$(MAIN)))$(subst .cpp,.exe,$(filter %.cpp,$(MAIN)))
+EXE		= $(subst .s,.bin,$(filter %.s,$(MAIN)))$(subst .c,.bin,$(filter %.c,$(MAIN)))$(subst .cpp,.exe,$(filter %.cpp,$(MAIN)))
 
 # dd, tool to write floppy
 DD	= dd bs=512 count=1 conv=notrunc
@@ -12,13 +12,12 @@ DD	= dd bs=512 count=1 conv=notrunc
 # FD, Floppy Disc
 FD	= $(SIGN).img
 FSIZE	= 1.44M
-MKFD	= bximage -mode=create -fd=$(FSIZE) -q
+MKFD	= bximage -func=create -fd=$(FSIZE) -q
 FILLFD	= $(DD)
 
 # CD, Compact Disc
 CDROOT	= $(SIGN)
 CD	= $(CDROOT).iso 
-DBOOT	= boot
 LOADADDR= 0x7c00
 MKCD	= mkisofs -r -q -input-charset=utf-8 
 FILLCD	= mkisofs -R -q -input-charset=utf-8 -no-emul-boot -boot-load-seg $(LOADADDR)
@@ -27,7 +26,7 @@ FILLCD	= mkisofs -R -q -input-charset=utf-8 -no-emul-boot -boot-load-seg $(LOADA
 
 # boot bochs config
 DBOCHSRC	= bochs
-BOCHS_SCRIPT	= $(DBOCHSRC)/bochs_debug
+BOCHS_SCRIPT= $(DBOCHSRC)/bochs_debug
 BOCHS		= bochs -q -rc $(BOCHS_SCRIPT)
 
 # boot option

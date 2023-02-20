@@ -4,7 +4,7 @@
 ##! 
 ##! @file	Makefile
 ##! @author	fstone.zh@foxmail.com
-##! @date	2016-12-16
+##! @date	2023-02-19
 ##! @version	0.1.0
 ############################################################
 # config file
@@ -24,7 +24,7 @@ DEFINES	= -D$(BOOT) -D$(DEMO)=$(DEMO)
 PINCS	= -Pprepro.s
 
 # Code & Build result
-MAIN	= $(DEMO_LOWER).asm
+MAIN	= boot/mbr.s
 SRC	= 
 
 vpath	d%.asm	demo
@@ -35,11 +35,11 @@ all:$(BOOT)
 
 cd:BOOT_FROM_CD
 BOOT_FROM_CD:$(EXE) $(CD)
-	cp $(EXE) $(CDROOT)/$(DBOOT)
-	$(FILLCD) -b $(DBOOT)/$(EXE) -c $(DBOOT)/$(EXE:.mac=.catalog) -o $(CD) $(CDROOT)
+	cp $(EXE) $(CDROOT)/$(dir $(EXE))
+	$(FILLCD) -b $(EXE) -c $(EXE:.bin=.catalog) -o $(CD) $(CDROOT)
 
 $(CD):
-	mkdir -p $(CDROOT)/$(DBOOT)
+	mkdir -p $(CDROOT)/$(dir $(EXE))
 	$(MKCD) -o $(CD) $(CDROOT)
 	
 fd:BOOT_FROM_FD
@@ -49,12 +49,14 @@ $(FD):
 	$(MKFD) $(FD)
 
 
-$(EXE):$(MAIN) $(SYSCFG) $(SRC)
-	$(ASM) $(DEFINES) $(INCLUDES) $(PINCS) $(ASFLAGS) $< -o $@
+$(EXE):$(MAIN:.s=.o) $(SYSCFG) $(SRC)
+	ld -e main --Ttext-segment=0 --oformat=binary -o $(EXE) $<
 
+.s.o:
+	as -o $@ $<
 
 clean:
-	rm -f $(EXE)
+	rm -f $(EXE) $(MAIN:.s=.o)
 
 clear:clean
 	rm -f $(EXE) $(FD) $(CD) $(HD) *.mac *.bin *.exe
