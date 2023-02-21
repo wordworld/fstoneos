@@ -2,12 +2,12 @@
 ##! @brief	stored bochs debug commands
 ##! 
 ##! 
-##! @file	debug
-##! @path	prj/fstoneos
+##! @file	bochs_debug
+##! @path	git/fstoneos/bochs
 ##! @author	fstone.zh@foxmail.com
-##! @date	2016-12-01
+##! @date	2023-02-20
 ##! @version	0.1.0
 ############################################################
 # b 0x7c00
-# b 0x7c00:0
+b 0x7c00:0
 c

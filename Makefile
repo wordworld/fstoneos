@@ -52,18 +52,30 @@ $(FD):
 $(EXE):$(MAIN:.s=.o) $(SYSCFG) $(SRC)
 	ld -e main --Ttext-segment=0 --oformat=binary -o $(EXE) $<
 
+$(EXE).qemu:$(MAIN:.s=.o)
+	ld -e main --oformat=binary -o $@ $< --Ttext=$(LOADADDR)
+
 .s.o:
 	as -o $@ $<
 
-clean:
-	rm -f $(EXE) $(MAIN:.s=.o)
+clean:FORCE
+	rm -f $(EXE)* $(MAIN:.s=.o)
 
-clear:clean
+clear:clean FORCE
 	rm -f $(EXE) $(FD) $(CD) $(HD) *.mac *.bin *.exe
 	$(CMD_CLEAN_DIR)
 
-run:
+bochs:FORCE $(EXE) $(BOOT)
 	$(BOCHS) -f $($(BOOT))
+
+qemu:$(EXE).qemu FORCE
+	$(QEMU) $< -S -s &
+	gdb -ex "file $<" \
+		-ex "target remote:1234" \
+		-ex "b *$(LOADADDR)" \
+		-ex "c" \
+		-ex "layout asm"
+	pgrep -f $(QEMU) | xargs kill -9
 
 burn:
 	sudo dd if=$(CD) of=/dev/sdb

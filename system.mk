@@ -24,6 +24,10 @@ FILLCD	= mkisofs -R -q -input-charset=utf-8 -no-emul-boot -boot-load-seg $(LOADA
 
 # HD, Hard Disk
 
+# boot qemu
+QEMU=/usr/bin/qemu-system-x86_64
+# QEMU=/usr/bin/qemu-system-i386
+
 # boot bochs config
 DBOCHSRC	= bochs
 BOCHS_SCRIPT= $(DBOCHSRC)/bochs_debug
@@ -44,3 +48,4 @@ DEMO_LOWER	= $(shell echo "$(DEMO)" | tr "[A-Z]" "[a-z]")
 # DEMO		= D002_ENTER_PM
 DEMO		= D003_PM2RM
 
+.PHONY:FORCE
