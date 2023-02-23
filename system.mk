@@ -1,5 +1,5 @@
 # Distribute
-LOGO	= fstoneos
+LOGO	= lubanix
 VERSION	= 1.0
 SIGN	= $(LOGO)-$(VERSION)
 

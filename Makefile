@@ -70,7 +70,7 @@ bochs:FORCE $(EXE) $(BOOT)
 
 qemu:$(EXE).qemu FORCE
 	$(QEMU) $< -S -s &
-	gdb -ex "file $<" \
+	gdb $< \
 		-ex "target remote:1234" \
 		-ex "b *$(LOADADDR)" \
 		-ex "c" \
