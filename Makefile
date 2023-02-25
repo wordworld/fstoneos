@@ -4,7 +4,7 @@
 ##! 
 ##! @file	Makefile
 ##! @author	fstone.zh@foxmail.com
-##! @date	2023-02-19
+##! @date	2023-02-25
 ##! @version	0.1.0
 ############################################################
 # config file
@@ -50,7 +50,7 @@ $(FD):
 
 
 $(EXE):$(MAIN:.s=.o) $(SYSCFG) $(SRC)
-	ld -e main --Ttext-segment=0 --oformat=binary -o $(EXE) $<
+	ld -e main --oformat=binary -o $@ $< --Ttext=0
 
 $(EXE).qemu:$(MAIN:.s=.o)
 	ld -e main --oformat=binary -o $@ $< --Ttext=$(LOADADDR)
